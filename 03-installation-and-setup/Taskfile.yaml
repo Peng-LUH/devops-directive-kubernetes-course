@@ -2,7 +2,7 @@ version: "3"
 
 env:
   CLUSTER_NAME: devops-directive-kubernetes-course
-  CIVO_REGION: NYC1
+  CIVO_REGION: FRA1 #NYC1
   GCP_REGION: us-central1
   GCP_ZONE: us-central1-a
   # Set default gum style options
@@ -134,7 +134,7 @@ tasks:
   gcp:06-create-cluster:
     desc: "Create GKE cluster"
     vars:
-      GCP_PROJECT_ID: kubernetes-course-424917
+      GCP_PROJECT_ID: kubernetes-101-490917
     cmds:
       - |
         gcloud container clusters create ${CLUSTER_NAME} \
@@ -175,7 +175,7 @@ tasks:
   kind:02-create-cluster:
     cmds:
       - kind create cluster --config kind-config.yaml
-    desc: Create a Kubernetes cluster using kind
+    desc: "Create a Kubernetes cluster using kind"
 
   kind:03-run-cloud-provider-kind:
     desc: "Run sigs.k8s.io/cloud-provider-kind@latest to enable load balancer services with KinD"
