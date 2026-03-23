@@ -13,6 +13,7 @@ tasks:
     cmds:
       - kubectl apply -f Namespace.yaml
       - kubens ${NAMESPACE}
+      - kubens
 
   02-apply-file-like:
     desc: "Apply the ConfigMap with file like keys"
@@ -45,3 +46,6 @@ tasks:
       - cmd: gum style "🚨 Deleting the namespace recursively deletes the resources inside of it! 🚨 "
         silent: true
       - kubectl delete -f Namespace.yaml
+      - kubens default
+      - kubens
+
