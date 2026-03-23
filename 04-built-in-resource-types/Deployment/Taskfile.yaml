@@ -30,6 +30,12 @@ tasks:
       - kubectl rollout restart deployment nginx-better
       - watch "kubectl get pods"
 
+  04-rollout-undo:
+    desc: "Rollback"
+    cmds:
+      - kubectl rollout undo deployment nginx-better
+      - kubectl get replicaset
+
   05-delete-namespace:
     desc: "Delete the namespace to clean up"
     cmds:
