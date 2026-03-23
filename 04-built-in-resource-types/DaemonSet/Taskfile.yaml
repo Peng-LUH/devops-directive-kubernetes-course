@@ -30,3 +30,5 @@ tasks:
       - cmd: gum style "🚨 Deleting the namespace recursively deletes the resources inside of it! 🚨 "
         silent: true
       - kubectl delete -f Namespace.yaml
+      - kubens default
+      - cd ..
