@@ -271,3 +271,150 @@ The ReplicaSet takes a pod definition and wraps it in another layer adding the c
 
 <img src="figs/kubernetes_resources_deployment.png">
 
+
+### Service
+
+- How to get network traffic to those applcations? -> service
+- Service serve as an internal load balancer across replicas
+- Uses `pod labels` to determine which pods to serve
+- Types
+
+    <img src="figs/kubernetes_service_types.png" style="width:800px">
+
+    - **CLusterIP**: Internal to Cluster
+    - **NodePort**: Listens on each node in cluster
+    - **Load Balancer**: Provisions external load balancer
+
+    
+- Architecture:
+
+    <img src="figs/kubernetes_service_architecture.png">
+
+### Job
+- Adds the concept of tracking "completions": one or more completions for a particular contaienr.
+- Used for execution of workloads that run to completion
+- Example:
+
+    <img src="figs/kubernetes_resources_job.png">
+
+- We are going to reach for a job whenever we have a specific task that needs to be completed one ore more times rather than a long running process that kubernetes should keep up forever.
+
+### CronJob
+
+- Adds the concept of a "schedule"
+- Used for periodic execution of workloads that run to completion
+- [crontab guru](https://crontab.guru)
+- Example:
+
+    <img src="figs/kubernetes_resources_conjob.png">
+
+### DaemonSet
+- Another type of application that you might want to run on a kubernetes cluster is one that requires having an instance on each of our different nodes and so for that we use what is called a `DaemonSet`.  
+- Runs a copy of the specified pod on all (or a specified subset of) nodes in the cluster
+- Useful for applications such as:
+    - Cluster storage daemon
+    - Log Aggregation
+    - Node monitoring
+- Example:
+
+    <img src="figs/kubernetes_resources_daemonset_1.png" style="width:280px;"><img src="figs/kubernetes_resources_daemonset_2.png" style="width:300px;">
+    
+    - fluentd: a log shipping agent
+    - a standalone pod definition on the left.
+    - Daemonset definition on the right.
+    - `Pod` definition maps to the **sepc** definition in the `DaemonSet`.
+
+- By default a DaemonSet is going to run one copy on every node except for the control plane nodes. You can modify this to
+    - have it run on a subset of the nodes based on particular conditions, 
+    - or have it does run on the control plane nodes if that were necessary.
+
+### StatefulSet
+- Similar to Deployment, except:
+    - Pods get sticky identity (pod-0, pod-1, etc...)
+    - Each pod mounts separate volumes
+    - Rollout behavior is ordered
+
+- Enables configuring workloads that require state management (e.g., primary vs. read-replica for a database)
+
+### ConfigMap
+- It enables you to have environment specific configuration and decouple those from the deployment and the contaienr images.
+
+- Two primary styles:
+    - Property like (MY_ENV_VAR = "MY_VALUE")
+    - File like (conf.yml = < multi-line string >)
+
+- Example:
+
+    <img src="figs/kubernetes_resources_configmap_1.png" style="width:500px;"><img src="figs/kubernetes_resources_configmap_2.png" style="width:400px;">
+
+
+### Secret
+- Similar to ConfigMaps with one main difference:
+    - Data is base64 encoded (this is to support binary data and is not a security mechanism)
+
+- Becasue they are a separate resource type, they can be managed/controlled with specific authorization policies
+
+- Example:
+
+    <img src="figs/kubernetes_resources_secrets_1.png">
+
+
+### Ingress
+- Enables routing traffic to many services via a single external LoadBalancer
+- Many options to choose from!
+    - Ingress-nginx
+    - HAProxy
+    - Kong
+    - Istio
+    - Traefik
+- Only officially supports layer 7 routing (e.g., http/https, but some implementations allow for layer 4 (TCP/UDP)) with additional configuration.
+- Example:
+    ```yaml
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: nginx-ingress
+    spec:
+      rules:
+        - http:
+          paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: nginx-clusterip
+                  port:
+                    number: 80
+                    
+    ```
+
+### GatewayAPI
+- Evolution of the Ingress API
+- Not to be confused with an "API Gateway"
+- Adds support for TCP/UDP
+- Handles more advanced routing scenarios
+- Example:
+    ```yaml
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: echo
+    spec:
+      parentRefs:
+        - name: kong
+      rules:
+        - matches:
+          - path:
+            type: PathPrefix
+            value: /
+        bacnendRefs:
+          - name: nginx-clusterip
+            kind: Service
+            port: 80
+    ```
+
+
+### PersistentVolume
+### RBAC
+
+
